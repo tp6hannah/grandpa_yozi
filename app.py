@@ -67,7 +67,7 @@ def handle_follow_message(event):
     reply_arr=[]
     firstM = TextSendMessage(text="這是東伯的柚子園")
     secondM = TextSendMessage(text="Yes, this is me!")
-    pic_url ='https://media.licdn.com/dms/image/C5103AQGFkQP0UXEFLA/profile-displayphoto-shrink_200_200/0?e=1529672400&v=beta&t=_tGqGLrPJ856JRyxZ-f9zhBGny5iWUSIQqxQ5N5hKsQ'
+    pic_url ='img/welcome_pic.img'
     image_message = ImageSendMessage(
         original_content_url= pic_url,
         preview_image_url= pic_url
