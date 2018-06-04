@@ -24,7 +24,8 @@ from linebot.models import (
     CarouselTemplate, CarouselColumn, PostbackEvent,
     StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
     ImageMessage, VideoMessage, AudioMessage, FileMessage,
-    UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent,ImageSendMessage
+    UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent,ImageSendMessage,
+    RichMenu, RichMenuBound, RichMenuArea, URITemplateAction
 )
 
 app = Flask(__name__)
@@ -55,10 +56,43 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    message = TextSendMessage(text=event.message.text)
-    line_bot_api.reply_message(
-        event.reply_token,
-        message)
+    user_message = event.message.text
+
+    # create menu
+    if user_message == "cr":
+        rich_menu_to_create = RichMenu(
+                                size=RichMenuBound(
+                                    width=2500,
+                                    height=1686
+                                ),
+                                selected= False,
+                                name="nice richmenu",
+                                chatBarText="touch me",
+                                areas=[
+                                    RichMenuArea(
+                                        RichMenuBound(
+                                            x=0,
+                                            y=0,
+                                            width=2500,
+                                            height=1686
+                                        ),
+                                        URITemplateAction(
+                                            uri='line://nv/location'
+                                        )
+                                    )
+                                ]
+                            )
+        rich_menu_id = line_bot_api.create_rich_menu(data=rich_menu_to_create)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=rich_menu_id)) 
+        print(rich_menu_id)
+
+    # echo user message 
+    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_message))    
+
+
+
+    
 
 
 # greeting text and image
@@ -66,12 +100,12 @@ def handle_message(event):
 def handle_follow_message(event):
     reply_arr=[]
     firstM = TextSendMessage(text="這是東伯的柚子園")
-    secondM = TextSendMessage(text="Yes, this is me!")
-    pic_url ='img/welcome_pic.img'
-    image_message = ImageSendMessage(
-        original_content_url= pic_url,
-        preview_image_url= pic_url
-    )
+    # secondM = TextSendMessage(text="Yes, this is me!")
+    # pic_url ='img/welcome_pic.img'
+    # image_message = ImageSendMessage(
+    #     original_content_url= pic_url,
+    #     preview_image_url= pic_url
+    # )
 
     confirm_template = ConfirmTemplate(text='Want to know more about me?', actions=[
             MessageTemplateAction(label='Yes!', text='About me'),
