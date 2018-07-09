@@ -25,9 +25,9 @@ from linebot.models import (
     StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
     ImageMessage, VideoMessage, AudioMessage, FileMessage,
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent,ImageSendMessage,
-    RichMenu, RichMenuBound, RichMenuArea, URITemplateAction
+    URITemplateAction
 )
-
+# RichMenu, RichMenuBound, RichMenuArea,
 app = Flask(__name__)
 
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
