@@ -30,10 +30,21 @@ from linebot.models import (
 
 app = Flask(__name__)
 
+channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
+channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
+if channel_secret is None:
+    print('Specify LINE_CHANNEL_SECRET as environment variable.')
+    sys.exit(1)
+if channel_access_token is None:
+    print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
+    sys.exit(1)
+
+
+# parser = WebhookParser(channel_secret)
 # Channel Access Token
-line_bot_api = LineBotApi('Hp3OkKuleQ22NU05uRmtGz+BD3WV90ZeFKpMJ6LK1pzWpPHMmNL4sUCYu4RyUzuDVYBGN8v40UsC7Eg3G7g5j3+vFu+jtlx4jZyYgdqjT1ah3Bl3ssEuZzhHyV8/mwo9l9cUGKabHQgppHFTBOGPYgdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi(channel_access_token)
 # Channel Secret
-handler = WebhookHandler('253c905f2976cb943bfb3f6776c24f8a')
+handler = WebhookHandler(channel_secret)
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -54,41 +65,41 @@ def callback():
     return 'OK'
 
 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    user_message = event.message.text
+# @handler.add(MessageEvent, message=TextMessage)
+# def handle_message(event):
+#     user_message = event.message.text
 
-    # create menu
-    if user_message == "cr":
-        rich_menu_to_create = RichMenu(
-                                size=RichMenuBound(
-                                    width=2500,
-                                    height=1686
-                                ),
-                                selected= False,
-                                name="nice richmenu",
-                                chatBarText="touch me",
-                                areas=[
-                                    RichMenuArea(
-                                        RichMenuBound(
-                                            x=0,
-                                            y=0,
-                                            width=2500,
-                                            height=1686
-                                        ),
-                                        URITemplateAction(
-                                            uri='line://nv/location'
-                                        )
-                                    )
-                                ]
-                            )
-        rich_menu_id = line_bot_api.create_rich_menu(data=rich_menu_to_create)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=rich_menu_id)) 
-        print(rich_menu_id)
+#     # create menu
+#     if user_message == "cr":
+#         rich_menu_to_create = RichMenu(
+#                                 size=RichMenuBound(
+#                                     width=2500,
+#                                     height=1686
+#                                 ),
+#                                 selected= False,
+#                                 name="nice richmenu",
+#                                 chatBarText="touch me",
+#                                 areas=[
+#                                     RichMenuArea(
+#                                         RichMenuBound(
+#                                             x=0,
+#                                             y=0,
+#                                             width=2500,
+#                                             height=1686
+#                                         ),
+#                                         URITemplateAction(
+#                                             uri='line://nv/location'
+#                                         )
+#                                     )
+#                                 ]
+#                             )
+#         rich_menu_id = line_bot_api.create_rich_menu(data=rich_menu_to_create)
+#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=rich_menu_id)) 
+#         print(rich_menu_id)
 
-    # echo user message 
-    else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_message))    
+#     # echo user message 
+#     else:
+#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_message))    
 
 
 
