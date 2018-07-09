@@ -1,4 +1,3 @@
-
 from __future__ import unicode_literals
 
 import errno
@@ -27,7 +26,7 @@ from linebot.models import (
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent,ImageSendMessage,
     URITemplateAction
 )
-# RichMenu, RichMenuBound, RichMenuArea,
+
 app = Flask(__name__)
 
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
@@ -51,62 +50,24 @@ handler = WebhookHandler(channel_secret)
 def callback():
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
-
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
-
     # handle webhook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-
     return 'OK'
 
-
-# @handler.add(MessageEvent, message=TextMessage)
-# def handle_message(event):
-#     user_message = event.message.text
-
-#     # create menu
-#     if user_message == "cr":
-#         rich_menu_to_create = RichMenu(
-#                                 size=RichMenuBound(
-#                                     width=2500,
-#                                     height=1686
-#                                 ),
-#                                 selected= False,
-#                                 name="nice richmenu",
-#                                 chatBarText="touch me",
-#                                 areas=[
-#                                     RichMenuArea(
-#                                         RichMenuBound(
-#                                             x=0,
-#                                             y=0,
-#                                             width=2500,
-#                                             height=1686
-#                                         ),
-#                                         URITemplateAction(
-#                                             uri='line://nv/location'
-#                                         )
-#                                     )
-#                                 ]
-#                             )
-#         rich_menu_id = line_bot_api.create_rich_menu(data=rich_menu_to_create)
-#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=rich_menu_id)) 
-#         print(rich_menu_id)
-
-#     # echo user message 
-#     else:
-#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_message))    
+# 處理訊息 echo 
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    message = TextSendMessage(text=event.message.text)
+    line_bot_api.reply_message(event.reply_token, message)
 
 
-
-    
-
-
-# greeting text and image
+# greeting text and image (剛加入好友時的問候語)
 @handler.add(FollowEvent)
 def handle_follow_message(event):
     reply_arr=[]
@@ -132,8 +93,5 @@ def handle_follow_message(event):
 
     line_bot_api.reply_message(event.reply_token , reply_arr)
 
-
-import os
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run()
